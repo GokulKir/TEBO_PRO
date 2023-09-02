@@ -65,7 +65,8 @@ export default function VideoCallScreen({}) {
     socket?.on('newCall', data => {
       remoteRTCMessage.current = data.rtcMessage;
       otherUserId.current = data.callerId;
-      setType('INCOMING_CALL');
+      processAccept();
+      setType('WEBRTC_ROOM');
     });
 
     socket?.on('callAnswered', data => {
