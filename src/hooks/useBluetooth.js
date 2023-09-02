@@ -1,15 +1,19 @@
+import { useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import { BleManager } from 'react-native-ble-plx';
+import { useRecoilState } from 'recoil';
+import { scanningCondition } from '../Recoil/recoilState';
 
 
 
 
 const useBleManager = () => {
+  const navigation = useNavigation()
   const [bleManager, setBleManager] = useState(new BleManager());
   const [connectedDevices, setConnectedDevices] = useState([]);
   const [loadign , setLoading] = useState(false) ; 
   const [allDevices , setAllDevices] = useState([])
-
+  const [scanningif , setScanningIf] = useRecoilState(scanningCondition)
 
   const startScanning = () => {
     const scannedDevices = [];
@@ -36,8 +40,10 @@ const useBleManager = () => {
         if (device.name && !scannedDevices.some((d) => d.id === device.id)) {
           scannedDevices.push({ id: device.id, name: device.name , serviceUUID : device.serviceUUIDs , characteristicUUID : device.serviceData});
           setAllDevices(scannedDevices);  
+          setScanningIf(true)
           // You can map or use the scanned device data here
           console.log('Mapped Device:', device.name);
+
   
           // Optionally, stop scanning if you have found the desired device
           if (device.name === 'YourDeviceName') {
@@ -93,7 +99,9 @@ const useBleManager = () => {
 
       if (characteristic) {
         await characteristic.writeWithResponse(data);
+        navigation.navigate('Checking')
         console.log('Data sent successfully:', data);
+
       } else {
         console.error('Characteristic not found.');
       }

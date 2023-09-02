@@ -40,7 +40,7 @@ import DeviceInfo from 'react-native-device-info';
 import Geocoder from 'react-native-geocoding';
 // import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
-import { SocketContext } from '../context/SocketContext';
+// import { SocketContext } from '../context/SocketContext';
 import { CONFIRMPOPUP } from '../Recoil/recoilState';
 import useWifiManager from '../hooks/useWifi';
 
@@ -71,7 +71,7 @@ export default function SsidTyping() {
 
 
 
-  const { sendMessage, Confirm } = useContext(SocketContext)
+  // const { sendMessage, Confirm } = useContext(SocketContext)
 
 
   const deviceInfo = DeviceInfo

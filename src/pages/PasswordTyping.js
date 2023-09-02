@@ -42,7 +42,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import useBleManager from '../hooks/useBluetooth';
 import useBle from '../hooks/useBle';
 import { BleManager } from 'react-native-ble-plx';
-import { DeviceIDCoil } from '../Recoil/recoilState';
+import { DeviceIDCoil, PasswordStoring, scanningCondition } from '../Recoil/recoilState';
 import { BallIndicator } from 'react-native-indicators';
 
 export default function PasswordTyping() {
@@ -59,6 +59,7 @@ export default function PasswordTyping() {
   const [WIFI, SETWIFI] = useRecoilState(WifiConnectionEstablished);
   const [SSIDVALUE, SETSSIDVALUE] = useRecoilState(SSidconnectionEstablished);
   const ssid = useRecoilValue(SsidValue);
+  const [pass , setPass] = useRecoilState(PasswordStoring)
   //Recoil states//
 
   //Platform states//
@@ -95,6 +96,7 @@ export default function PasswordTyping() {
   const [BleList , setBleList] = useState(false)
   const [Bleset , setBleset] = useRecoilState(DeviceIDCoil)
   const { startScanning, connectToDevice, listConnectedDevices , connectedDevices , allDevices } = useBleManager();
+  const ScanningIf = useRecoilValue(scanningCondition)
 
   
   const [uniqueDeviceNames, setUniqueDeviceNames] = useState(new Set());
@@ -217,6 +219,7 @@ useEffect(()=>{
 
     }
     if (ssid && password) {
+      setPass(password)
       try {
         setConnecting(true);
         const isConnected = await WifiManager.connectToProtectedSSID(
@@ -227,11 +230,8 @@ useEffect(()=>{
         );
         if (isConnected) {
           console.log(`Connected to WiFi network: ${ssid}`);
-
           await AsyncStorage.setItem('userToken', ssid);
-
           requestPermissionsAndStartScanning()
-  
           setConnectionTrue(true);
           setBleList(true)
         } else {
@@ -403,6 +403,7 @@ useEffect(()=>{
 
       <Modal visible={BleList} transparent>
         <View style={styles.ModalStyle}>
+          {ScanningIf === true  ?     
           <ScrollView>
             {allDevices.map((obj, i) => {
               return (
@@ -426,6 +427,19 @@ useEffect(()=>{
               );
             })}
           </ScrollView>  
+
+          : 
+
+
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <BallIndicator color="red" size={50} /> 
+           <Text style={{top:-90 , fontStyle:'italic' , fontWeight:'400'}}>Scanning devices..</Text>
+         </View>
+
+
+   
+
+          }
 
 
 
