@@ -139,8 +139,7 @@ export const AuthStack = () => (
               },
             },
 
-            headerTitle: props => <Header {...props} />,
-            headerStyle: {backgroundColor: '#fff'},
+        
           }}
         />
         <Stack.Screen
@@ -271,8 +270,7 @@ export const AppStack = () => (
               },
             },
             headerShown: false,
-            headerTitle: props => <Header {...props} />,
-            headerStyle: {backgroundColor: '#fff'},
+         
           }}
         />
 

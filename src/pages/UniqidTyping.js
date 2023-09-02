@@ -35,7 +35,7 @@ export default function UniqidTyping() {
 
 
 
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const { BottomPage } = useStyle();
   const [uid, setUid] = useState()
   const uniqID = useRecoilValue(UIDSTORING)
@@ -94,7 +94,16 @@ export default function UniqidTyping() {
   }, [])
 
 
+  useEffect(() => {
 
+    setTimeout(() => {
+
+      setVisible(false)
+
+
+    }, [2500])
+
+  }, [])
 
 
 
@@ -234,7 +243,7 @@ export default function UniqidTyping() {
   const CheckingCondition = async () => {
 
 
-
+    navigation.navigate('Stream')
 
 
     try {

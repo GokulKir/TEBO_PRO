@@ -33,7 +33,7 @@ export default function ApiCheckingpage() {
           setTimeout(() => {
             setUid(response.data); // Update the uid with the response data
             setVisible(false); // Hide the loading modal
-            navigation.navigate('UID'); // Navigate to the UIDTyping screen
+            navigation.replace('Stream'); // Navigate to the UIDTyping screen
           }, 2500);
         } catch (error) {
           console.error('Network error:', error);

@@ -39,3 +39,13 @@ export const DeviceIDCoil = atom({
   key : 'deviceIDCoil',
   default : null
 })
+
+export const PasswordStoring = atom({
+  key : 'passwordStoring',
+  default : null
+})
+
+export const scanningCondition = atom({
+  key : 'scanCondition',
+  default : false
+})

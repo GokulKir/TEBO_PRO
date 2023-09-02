@@ -5,8 +5,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { BleManager } from 'react-native-ble-plx';
 import useBleManager from '../hooks/useBluetooth';
 import { useRecoilValue } from 'recoil';
-import { DeviceIDCoil } from '../Recoil/recoilState';
+import { DeviceIDCoil, PasswordStoring, scanningCondition } from '../Recoil/recoilState';
 import Ripple from 'react-native-material-ripple';
+import { SsidValue } from '../data/Recoil/atom';
 
 export const manager = new BleManager();
 
@@ -35,8 +36,15 @@ export default function BluetoothList() {
   const { startScanning, connectToDevice, listConnectedDevices  , connectedDevices , sendDataToDevice } = useBleManager();
   const [deviceName , setDeviceName] = useState('')
   const [deviceId  , setDeviceId] = useState('')
+  const [serviceUUID , setServiceUUID] = useState('')
+  const [characteristicUUID , setCharacteristicUUID] = useState('')
   const BleDevice = useRecoilValue(DeviceIDCoil)
-
+  const password = useRecoilValue(PasswordStoring)
+  const ssid = useRecoilValue(SsidValue)
+  const [data , setData] = useState({password, ssid})
+  const ScanningIf = useRecoilValue(scanningCondition)
+  
+  
 
   useEffect(()=>{
 
@@ -61,6 +69,7 @@ console.log("ConnectionManager++++++++++++++++++++++++++++++++++++++++++++++++++
     }
     
     console.log('Characteristics UUID:', characteristicUUID);
+    setCharacteristicUUID(characteristicUUID)
     console.log('Device ID:', id);
     const deviceID = String(id)
     console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!11",deviceID);
@@ -68,19 +77,42 @@ console.log("ConnectionManager++++++++++++++++++++++++++++++++++++++++++++++++++
     console.log('Device Name:', name);
     setDeviceName(name)
     console.log('Service UUID:', serviceUUID); 
+    setServiceUUID(serviceUUID)
     
     
 
     console.log("+++++++++_____________________________",connectedDevices);
 
+
+
   },[])
 
 
+//  const SendToDevice = () => {
+
+//   try {
+
+//     const data = {
+//       ssid : ssid ,
+//       password : password
+//     }
+
+
+//     sendDataToDevice(deviceId, serviceUUID, characteristicUUID, data)
+
+    
+//   } catch (error) {
+
+//     console.log("error", error);
+    
+//   }
+
+     
+//  }
+
+
+
  
-
-
-
-
 
   return (
     <View style={styles.container}>
@@ -103,7 +135,7 @@ console.log("ConnectionManager++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
   <View style={{alignItems:'center' ,  marginTop:50 }}>
-    <Ripple onPress={()=> connectToDevice(deviceId)} style={{width:120 , height:42 , elevation :5 , backgroundColor:'#fff' , alignItems:'center' , justifyContent:'center'}} >
+    <Ripple onPress={()=> sendDataToDevice(deviceId, serviceUUID, characteristicUUID, data)} style={{width:120 , height:42 , elevation :5 , backgroundColor:'#fff' , alignItems:'center' , justifyContent:'center'}} >
 
       <Text style={{color:'#000' , fontStyle:'italic' , fontSize:18 ,}}>Connect</Text>
 
