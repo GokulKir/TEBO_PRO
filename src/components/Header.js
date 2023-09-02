@@ -23,7 +23,7 @@ export default function Header() {
   return (
     <View style={styles.container}>
       <View style={styles.Fullspace}>
-        <Image style={styles.LogoSize} source={require('../assets/Robo.png')} />
+        <Image style={styles.LogoSize} source={require('../asset/Robo.png')} />
       </View>
     </View>
   );

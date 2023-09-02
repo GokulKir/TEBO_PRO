@@ -9,7 +9,7 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { SocketProvider } from './src/context/SocketContext';
+import SocketProvider  from './src/context/SocketContext';
 
 
 export default function Main() {
