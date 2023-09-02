@@ -1,29 +1,43 @@
-import React, { useEffect, useState,useRef } from 'react';
-import { View , Text, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { RTCView, RTCPeerConnection, RTCSessionDescription, RTCIceCandidate, mediaDevices } from 'react-native-webrtc';
-import CallEnd from '../StreamComponent/CallEnd'
-import CallAnswere from '../StreamComponent/CallAnswer'
-import CameraSwitch from '../StreamComponent/CamaraSwitch'; 
+import React, {useEffect, useState, useRef} from 'react';
+import {
+  View,
+  Text,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
+import {
+  RTCView,
+  RTCPeerConnection,
+  RTCSessionDescription,
+  RTCIceCandidate,
+  mediaDevices,
+} from 'react-native-webrtc';
+import CallEnd from '../StreamComponent/CallEnd';
+import CallAnswere from '../StreamComponent/CallAnswer';
+import CameraSwitch from '../StreamComponent/CamaraSwitch';
 import Leave from '../StreamComponent/Leave';
 import MicOff from '../StreamComponent/MicOff';
 import MicOn from '../StreamComponent/MicOn';
 import VideoOff from '../StreamComponent/VideoOff';
 import VideoOn from '../StreamComponent/VideoOn';
-import { useRecoilValue } from 'recoil';
-import { useSocket } from '../context/SocketContext';
-import { UIDSTORING } from '../Recoil/recoilState';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {useRecoilValue} from 'recoil';
+import {useSocket} from '../context/SocketContext';
+import {UIDSTORING} from '../Recoil/recoilState';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import IconContainer from '../StreamComponent/IconContainer';
+import {useNavigation} from '@react-navigation/native';
 
 export default function VideoCallScreen({}) {
   const [localStream, setlocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [type, setType] = useState('JOIN');
-  const uuid = useRecoilValue(UIDSTORING)
-console.log(uuid);
+  const uuid = useRecoilValue(UIDSTORING);
+  const navigation = useNavigation();
+  console.log(uuid);
   const otherUserId = useRef(null);
 
-  const {socket} = useSocket()
+  const {socket} = useSocket();
 
   const [localMicOn, setlocalMicOn] = useState(true);
 
@@ -124,7 +138,7 @@ console.log(uuid);
     });
 
     peerConnection.current.onaddstream = event => {
-      console.log(event,"event");
+      console.log(event, 'event');
       setRemoteStream(event.stream);
     };
 
@@ -374,6 +388,7 @@ console.log(uuid);
     peerConnection.current.close();
     setlocalStream(null);
     setType('JOIN');
+    navigation.replace('ApiCheck');
   }
 
   const WebrtcRoomScreen = () => {
@@ -385,24 +400,34 @@ console.log(uuid);
           paddingHorizontal: 12,
           paddingVertical: 12,
         }}>
-        {localStream ? (
-          <RTCView
-            objectFit={'cover'}
-            style={{flex: 1, backgroundColor: '#050A0E'}}
-            streamURL={localStream.toURL()}
-          />
-        ) : null}
-        {remoteStream ? (
-          <RTCView
-            objectFit={'cover'}
-            style={{
-              flex: 1,
-              backgroundColor: '#050A0E',
-              marginTop: 8,
-            }}
-            streamURL={remoteStream.toURL()}
-          />
-        ) : null}
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: '#050A0E',
+            paddingHorizontal: 12,
+            paddingVertical: 12,
+            flexDirection: 'row',
+            display: 'flex',
+            gap: 10,
+          }}>
+          {localStream ? (
+            <RTCView
+              objectFit={'cover'}
+              style={{flex: 1, backgroundColor: '#050A0E'}}
+              streamURL={localStream.toURL()}
+            />
+          ) : null}
+          {remoteStream ? (
+            <RTCView
+              objectFit={'cover'}
+              style={{
+                flex: 1,
+                backgroundColor: '#050A0E',
+              }}
+              streamURL={remoteStream.toURL()}
+            />
+          ) : null}
+        </View>
         <View
           style={{
             marginVertical: 12,

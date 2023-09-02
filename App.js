@@ -7,28 +7,21 @@ import {
 
 const Stack = createStackNavigator();
 
-
 //Asyncstorage module//
 import AsyncStorage from '@react-native-async-storage/async-storage';
 //Asyncstorage module//
 
-
-import { isAuthenticatedState } from './src/Recoil/recoilState';
-import { useRecoilState } from 'recoil';
-import { AppStack , AuthStack } from './src/Stack/NavigationStack';
-
-
+import {isAuthenticatedState} from './src/Recoil/recoilState';
+import {useRecoilState} from 'recoil';
+import {AppStack, AuthStack} from './src/Stack/NavigationStack';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useRecoilState(isAuthenticatedState);
-
-
-
+  const [isAuthenticated, setIsAuthenticated] =
+    useRecoilState(isAuthenticatedState);
 
   React.useEffect(() => {
     checkAuthStatus();
   }, []);
-
 
   const checkAuthStatus = async () => {
     try {
@@ -41,16 +34,9 @@ export default function App() {
     }
   };
 
-
   return (
     <NavigationContainer>
-
-{isAuthenticated ? 
-    <AppStack/>
-     : 
-     <AuthStack/>
-     }
-     
+      {isAuthenticated ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   );
 }

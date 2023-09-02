@@ -1,25 +1,23 @@
-import { atom , selector } from "recoil";
+import {atom, selector} from 'recoil';
 
 export const UIDSTORING = atom({
-    key: "UIDSTORING",
-    default:null
-})
-
+  key: 'UIDSTORING',
+  default: null,
+});
 
 export const CONFIRMPOPUP = atom({
-    key:"CONFIRMPOPUP",
-    default:null
-})
-
+  key: 'CONFIRMPOPUP',
+  default: null,
+});
 
 export const userState = atom({
   key: 'userState',
-  default:  null,
+  default: null,
 });
 
 export const isLoggedInState = selector({
   key: 'isLoggedInState',
-  get: ({ get }) => {
+  get: ({get}) => {
     const user = get(userState);
     return user !== null;
   },
@@ -36,16 +34,16 @@ export const isAuthenticatedState = atom({
 });
 
 export const DeviceIDCoil = atom({
-  key : 'deviceIDCoil',
-  default : null
-})
+  key: 'deviceIDCoil',
+  default: null,
+});
 
 export const PasswordStoring = atom({
-  key : 'passwordStoring',
-  default : null
-})
+  key: 'passwordStoring',
+  default: null,
+});
 
 export const scanningCondition = atom({
-  key : 'scanCondition',
-  default : false
-})
+  key: 'scanCondition',
+  default: false,
+});
