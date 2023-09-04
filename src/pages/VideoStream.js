@@ -15,6 +15,7 @@ import { UIDSTORING } from '../Recoil/recoilState';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import IconContainer from '../StreamComponent/IconContainer';
 
+
 export default function VideoCallScreen({}) {
   const [localStream, setlocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);

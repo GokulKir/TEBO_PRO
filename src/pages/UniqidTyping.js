@@ -32,9 +32,6 @@ export default function UniqidTyping() {
   //Navigating veriable//
 
 
-
-
-
   const [visible, setVisible] = useState(false);
   const { BottomPage } = useStyle();
   const [uid, setUid] = useState()
@@ -42,7 +39,7 @@ export default function UniqidTyping() {
   const { location, placeName } = useGeolocation();
   const [loading, setLoading] = useState(null)
   const [text, setText] = useState('Connected mqqtt not fetching received data')
-  const [client, publishMessage] = useMQTT('mqtt://sonic.domainenroll.com:1883', 'domainenroll:de120467', '/user_data', text);
+  const [client, publishMessage , receivedMessage] = useMQTT('mqtt://sonic.domainenroll.com:1883', 'domainenroll:de120467', '/user_data', text);
   const { sendMessage, addUserId } = useContext(SocketContext)
   const [condition, setCondition] = useState(false)
 
@@ -50,6 +47,17 @@ export default function UniqidTyping() {
   // const port = "1883";
   // const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
   // const topic = "/user_data";
+
+
+
+  useEffect(() => {
+    // You can access the received message here
+    if (receivedMessage) {
+      console.log('Received MQTT message:', receivedMessage);
+      // Perform any additional actions with the received message
+    }
+  }, [receivedMessage]);
+
 
 
   // const connectUrl = `mqtt://${host}:${port}`;

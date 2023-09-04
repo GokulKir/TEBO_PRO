@@ -36,7 +36,7 @@
     "react-native-screens": "^3.25.0",
     "react-native-svg": "^13.13.0",
     "react-native-vector-icons": "^10.0.0",
-    "react-native-webrtc": "^1.94.2",
+    "react-native-webrtc": "^111.0.3",
     "react-native-wifi-reborn": "^4.8.3",
     "recoil": "^0.7.7",
     "simple-peer": "^9.11.1",
