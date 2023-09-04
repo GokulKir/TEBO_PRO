@@ -40,7 +40,6 @@ export default function UniqidTyping() {
   const [loading, setLoading] = useState(null)
   const [text, setText] = useState('Connected mqqtt not fetching received data')
   const [client, publishMessage , receivedMessage] = useMQTT('mqtt://sonic.domainenroll.com:1883', 'domainenroll:de120467', '/user_data', text);
-  const { sendMessage, addUserId } = useContext(SocketContext)
   const [condition, setCondition] = useState(false)
 
   // const host = "sonic.domainenroll.com";
@@ -60,46 +59,8 @@ export default function UniqidTyping() {
 
 
 
-  // const connectUrl = `mqtt://${host}:${port}`;
 
 
-  // const [client, publishMessage] = useMQTT('mqtt://sonic.domainenroll.com:1883', 'domainenroll:de120467', '/user_data', text);
-
-  //Mqqtt state//
-
-  // const uri = ''; 
-  // const clientId = '';
-  // const topic = '/user_data';
-
-  //  useEffect(()=>{
-
-  //   setTimeout(() => {
-
-  //     publishMessage(text)
-
-  //   }, 2500);
-
-  //  },[])
-
-
-
-
-  // useEffect(()=>{
-
-  //   setTimeout(()=>{
-
-  //     navigation.navigate('Stream')
-
-  //   },2000)
-
-  // },[])
-
-
-
-
-  useEffect(() => {
-    addUserId('TEBO-GOKUL-NOKIA-TABLET')
-  }, [])
 
 
   useEffect(() => {
@@ -115,62 +76,63 @@ export default function UniqidTyping() {
 
 
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (location) {
-      console.log("Latitude:", location.latitude, "Longitude:", location.longitude, "Accuracy:", location.accuracy);
-    }
-  }, [location]);
+  //   if (location !== null) {
+  //     console.log("Latitude:", location.latitude, "Longitude:", location.longitude, "Accuracy:", location.accuracy);
+  //   }
+  // }, [location]);
 
-  useEffect(() => {
-    if (placeName) {
-      console.log('Place Name:', placeName);
-      console.log("Accuracy:", location.accuracy + " latitude " + location.latitude);
-    }
-  }, [placeName]);
-
-
+  // useEffect(() => {
+  //   if (placeName) {
+  //     console.log('Place Name:', placeName);
+  //     console.log("Accuracy:", location.accuracy + " latitude " + location.latitude);
+  //   }
+  // }, [placeName]);
 
 
 
 
 
 
-  useEffect(() => {
-    const fetchRobotUUID = async () => {
-      if (location && placeName && uid) {
-        const postData = {
-          robot_uuid: uid,
-          latitude: location.latitude,
-          longitude: location.longitude,
-          location: placeName,
-          map_accuracy: location.accuracy,
 
-        };
 
-        setLoading(true);
+  // useEffect(() => {
+  //   console.log("Location data : " , location.latitude + location.longitude + placeName);
+  //   const fetchRobotUUID = async () => {
+  //     if (location && placeName && uid) {
+  //       const postData = {
+  //         robot_uuid: uid,
+  //         latitude: location.latitude,
+  //         longitude: location.longitude,
+  //         location: placeName,
+  //         map_accuracy: location.accuracy,
 
-        try {
-          const response = await apiInstance.post('/api/v1/robot-location', postData);
-          console.log('Success:', response.data);
-          setTimeout(() => {
-            console.log("Sent Location");
-          }, 2500);
-        } catch (error) {
-          console.error('Network error:', error);
-          if (error.isAxiosError && !error.response) {
-            console.error('Network connection issue');
-          } else if (error.response) {
-            console.error('Response data:', error.response.data);
-          }
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
+  //       };
 
-    fetchRobotUUID();
-  }, [uid, location, placeName]);
+  //       setLoading(true);
+
+  //       try {
+  //         const response = await apiInstance.post('/api/v1/robot-location', postData);
+  //         console.log('Success:', response.data);
+  //         setTimeout(() => {
+  //           console.log("Sent Location");
+  //         }, 2500);
+  //       } catch (error) {
+  //         console.error('Network error:', error);
+  //         if (error.isAxiosError && !error.response) {
+  //           console.error('Network connection issue');
+  //         } else if (error.response) {
+  //           console.error('Response data:', error.response.data);
+  //         }
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     }
+  //   };
+
+  //   fetchRobotUUID();
+  // }, [uid, location, placeName]);
 
 
 

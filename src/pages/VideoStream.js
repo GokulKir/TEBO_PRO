@@ -14,13 +14,98 @@ import { useSocket } from '../context/SocketContext';
 import { UIDSTORING } from '../Recoil/recoilState';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import IconContainer from '../StreamComponent/IconContainer';
-
+import useMQTT from '../hooks/useMqtt';
+import useStyle from '../hooks/useStyle';
+import { Modal, Portal, Button, PaperProvider } from 'react-native-paper';
+import Ripple from 'react-native-material-ripple';
+import apiInstance from '../api/apiInstance';
+import useGeolocation from '../hooks/useLocation';
 
 export default function VideoCallScreen({}) {
   const [localStream, setlocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [type, setType] = useState('JOIN');
-  const uuid = useRecoilValue(UIDSTORING)
+  const [loading , setLoading] = useState(false)
+  const [visible , setVisible] = useState(false)
+  const uid = useRecoilValue(UIDSTORING)
+  const { data: { robot: { status, uuid } } } = uid;
+
+  const { location, placeName , getCurrentLocation } = useGeolocation();
+  const [client, publishMessage , receivedMessage] = useMQTT('mqtt://sonic.domainenroll.com:1883', 'domainenroll:de120467', `/Devlacus/Tebo/${uid}/instructions`);
+
+  const { BottomPage } = useStyle();
+
+  const sty = BottomPage
+  
+
+  useEffect(() => {
+    console.log("++++++++++++++++",location);
+    // You can access the received message here
+    if (receivedMessage) {
+      console.log('Received MQTT message:', receivedMessage);
+      setVisible(true)
+      // Perform any additional actions with the received message
+    }
+  }, [receivedMessage]);
+
+
+  useEffect(()=>{
+
+    getCurrentLocation()
+   
+  },[])
+
+
+
+  
+  
+  
+  useEffect(() => {
+    console.log("ROBOTUUID",uuid);
+    console.log("Loacation data",placeName  ,location);
+    const fetchRobotUUID = async () => {
+      if (location && placeName && uuid) {
+        const postData = {
+          robot_uuid: uuid,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          location: placeName,
+          map_accuracy: location.accuracy,
+        };
+console.log(postData,"postData");
+        setLoading(true);
+
+        try {
+          const response = await apiInstance.post('/api/v1/robot-location', postData);
+          console.log('Success:', response.data);
+          setTimeout(() => {
+            console.log("Sent Location");
+          }, 2500);
+        } catch (error) {
+          console.error('Network error:', error);
+          if (error.isAxiosError && !error.response) {
+            console.error('Network connection issue');
+          } else if (error.response) {
+            console.error('Response data:', error.response.data);
+          }
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    // setTimeout(()=>{
+
+      fetchRobotUUID();
+
+    // },1500)
+
+ 
+  }, [uuid, location, placeName]);
+
+
+
+
 console.log(uuid);
   const otherUserId = useRef(null);
 
@@ -234,9 +319,28 @@ console.log(uuid);
                     color: '#ffff',
                     letterSpacing: 6,
                   }}>
-                  {uuid?.data?.robot?.uuid}
+                  {uid?.data?.robot?.uuid}
                 </Text>
               </View>
+              <Modal visible={visible} transparent>
+        <View style={sty.UIDModal}>
+          <View style={sty.centerBoxText}>
+            <Text style={sty.PopUpText}>
+              John Doe wants to connect to Robot Black Heart!
+            </Text>
+          </View>
+
+          <View style={sty.ModalButtonView}>
+            <Ripple onPress={() => CheckingCondition()} style={sty.ModalButton}>
+              <Text>ACCEPT</Text>
+            </Ripple>
+
+            <Ripple onPress={() => CheckingConditionfalse()} style={sty.ModalButtonRed}>
+              <Text>REJECT</Text>
+            </Ripple>
+          </View>
+        </View>
+      </Modal>
             </View>
           </>
         </TouchableWithoutFeedback>

@@ -21,7 +21,7 @@ const useMQTT = (uri, clientId, topic, message) => {
 
       mqttClient.on('message', (msg) => {
         console.log('mqtt.event.message', msg);
-        setReceivedMessage(msg); // Store received message in state
+        setReceivedMessage(msg); 
       });
 
       mqttClient.on('connect', () => {

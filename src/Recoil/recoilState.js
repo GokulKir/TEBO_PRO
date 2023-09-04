@@ -49,3 +49,8 @@ export const scanningCondition = atom({
   key : 'scanCondition',
   default : false
 })
+
+export const ConnectionAlready = atom({
+  key : 'Connected',
+  default:null
+})

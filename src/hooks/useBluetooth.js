@@ -2,7 +2,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import { BleManager } from 'react-native-ble-plx';
 import { useRecoilState } from 'recoil';
-import { scanningCondition } from '../Recoil/recoilState';
+import { ConnectionAlready, scanningCondition } from '../Recoil/recoilState';
+import { Alert } from 'react-native';
 
 
 
@@ -14,6 +15,7 @@ const useBleManager = () => {
   const [loadign , setLoading] = useState(false) ; 
   const [allDevices , setAllDevices] = useState([])
   const [scanningif , setScanningIf] = useRecoilState(scanningCondition)
+  const [alreadyConnection , setAllReadyConnection] = useRecoilState(ConnectionAlready)
 
   const startScanning = () => {
     const scannedDevices = [];
@@ -59,18 +61,21 @@ const useBleManager = () => {
   const connectToDevice = async (deviceId) => {
     try {
       console.log("Connecting to device:", deviceId);
+  
+      // Attempt to connect to the Bluetooth device
       const device = await bleManager.connectToDevice(deviceId);
   
+      // Check if the device is not already in the connectedDevices list
       if (!connectedDevices.some(dev => dev.id === deviceId)) {
+        // Add the connected device to the list of connected devices
         setConnectedDevices([...connectedDevices, device]);
         console.log('Device connected:', device.name);
+      } else {
+        console.log('Device is already connected:', device.name);
+        setAllReadyConnection(true)
       }
-  
-   
-  
     } catch (error) {
       console.error('Error connecting to device:', error);
-
     }
   };
 

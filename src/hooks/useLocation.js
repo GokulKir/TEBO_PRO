@@ -5,7 +5,9 @@ import axios from 'axios';
 const useGeolocation = () => {
   const [location, setLocation] = useState(null);
   const [placeName, setPlaceName] = useState(null);
-  const apiKey = 'AIzaSyDLg_VU_6t6k3GdnSDUr8_ExrBfKQ3k-2I';
+  // const apiKey = 'AIzaSyDLg_VU_6t6k3GdnSDUr8_ExrBfKQ3k-2I';
+
+    const apiKey = 'AIzaSyDLg_VU_6t6k3GdnSDUr8_ExrBfKQ3k-2I'
 
   const getCurrentLocation = () => {
     Geolocation.getCurrentPosition(
@@ -39,9 +41,10 @@ const useGeolocation = () => {
 
   useEffect(() => {
     getCurrentLocation();
+
   }, []);
 
-  return { location, placeName };
+  return { location, placeName , getCurrentLocation };
 };
 
 export default useGeolocation;

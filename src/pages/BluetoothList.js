@@ -4,8 +4,8 @@ import { responsiveHeight, responsiveWidth } from 'react-native-responsive-dimen
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { BleManager } from 'react-native-ble-plx';
 import useBleManager from '../hooks/useBluetooth';
-import { useRecoilValue } from 'recoil';
-import { DeviceIDCoil, PasswordStoring, scanningCondition } from '../Recoil/recoilState';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Connected, DeviceIDCoil, PasswordStoring, scanningCondition } from '../Recoil/recoilState';
 import Ripple from 'react-native-material-ripple';
 import { SsidValue } from '../data/Recoil/atom';
 
@@ -43,7 +43,6 @@ export default function BluetoothList() {
   const ssid = useRecoilValue(SsidValue)
   const [data , setData] = useState({password, ssid})
   const ScanningIf = useRecoilValue(scanningCondition)
-  
   
 
   useEffect(()=>{
@@ -135,7 +134,7 @@ console.log("ConnectionManager++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
   <View style={{alignItems:'center' ,  marginTop:50 }}>
-    <Ripple onPress={()=> sendDataToDevice(deviceId, serviceUUID, characteristicUUID, data)} style={{width:120 , height:42 , elevation :5 , backgroundColor:'#fff' , alignItems:'center' , justifyContent:'center'}} >
+    <Ripple onPress={()=> connectToDevice(deviceId)} style={{width:120 , height:42 , elevation :5 , backgroundColor:'#fff' , alignItems:'center' , justifyContent:'center'}} >
 
       <Text style={{color:'#000' , fontStyle:'italic' , fontSize:18 ,}}>Connect</Text>
 
