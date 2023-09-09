@@ -54,3 +54,8 @@ export const ConnectionAlready = atom({
   key : 'Connected',
   default:null
 })
+
+export const ConnectedDeviceName = atom({
+  key : 'ConnectedDeviceName',
+  default : null
+})

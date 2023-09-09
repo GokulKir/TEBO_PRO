@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const apiInstance = axios.create({
-    baseURL : "http://tebo.domainenroll.com",
+    timeout : 10000 ,
+    baseURL : "https://tebo.domainenroll.com",
 })
 
 

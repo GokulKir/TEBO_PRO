@@ -64,8 +64,6 @@ const SocketProvider = ({ children }) => {
   const answerCall = async () => {
     setCallAccepted(true);
 
-    
-
     userStream.getTracks().forEach(track => peer.addTrack(track, userStream));
 
     peer.onicecandidate = event => {
