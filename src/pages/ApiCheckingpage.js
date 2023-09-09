@@ -12,17 +12,18 @@ export default function ApiCheckingpage() {
   const [visible, setVisible] = useState(true);
   const [uid, setUid] = useRecoilState(UIDSTORING);
   const [loading, setLoading] = useState(false);
+  const [Uuid , setUuid] = useState()
 
   useEffect(() => {
     DeviceInfo.getUniqueId().then((uniqueId) => {
-      setUid(uniqueId);
+      setUuid(uniqueId);
     });
   }, []);
 
   useEffect(() => {
-    if (uid) {
+    if (Uuid) {
       const postData = {
-        device_id: uid,
+        device_id: Uuid,
       };
 
       const fetchRobotUUID = async () => {
@@ -44,7 +45,7 @@ export default function ApiCheckingpage() {
 
       fetchRobotUUID();
     }
-  }, [uid]);
+  }, [Uuid]);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
