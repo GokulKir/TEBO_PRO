@@ -143,8 +143,6 @@ const bleManager = new BleManager();
       } catch (error) {
         console.error('Error requesting permissions:', error);
       }
-    
-    
   };
     // requestPermissionsAndStartScanning()
 
@@ -153,7 +151,6 @@ const bleManager = new BleManager();
 
   // Rest of your component code
   
-
 
 
   // useEffect(() => {
@@ -167,9 +164,7 @@ const bleManager = new BleManager();
 
 
 useEffect(()=>{
-
   console.log("Connected peripherals:++++++++++ " + allDevices);
-
 },[])
 
 

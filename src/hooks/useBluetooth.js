@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import { BleManager } from 'react-native-ble-plx';
-import { useRecoilState } from 'recoil';
-import { ConnectedDeviceName, ConnectionAlready, scanningCondition } from '../Recoil/recoilState';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { ConnectedBleCondition, ConnectedDeviceName, ConnectionAlready, scanningCondition } from '../Recoil/recoilState';
 import { Alert } from 'react-native';
 
 
@@ -17,6 +17,7 @@ const useBleManager = () => {
   const [scanningif , setScanningIf] = useRecoilState(scanningCondition)
   const [alreadyConnection , setAllReadyConnection] = useRecoilState(ConnectionAlready)
   const [deviceName , setDeviceName] =  useRecoilState(ConnectedDeviceName)
+  const BleCondition = useRecoilValue(ConnectedBleCondition)
 
   const startScanning = () => {
     const scannedDevices = [];
@@ -49,7 +50,7 @@ const useBleManager = () => {
 
   
           // Optionally, stop scanning if you have found the desired device
-          if (device.name === 'YourDeviceName') {
+          if (device.name === BleCondition) {
             bleManager.stopDeviceScan();
             console.log('Stopped scanning.');
           }

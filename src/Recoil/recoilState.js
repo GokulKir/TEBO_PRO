@@ -59,3 +59,13 @@ export const ConnectedDeviceName = atom({
   key : 'ConnectedDeviceName',
   default : null
 })
+
+export const ConnectedBleCondition = atom({
+  key : 'ConnectedBleCondition',
+  default : null
+})
+
+export const MqttMessage = atom({
+  key : 'ConnectedMessage',
+  default : null
+})

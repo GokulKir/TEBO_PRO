@@ -18,6 +18,7 @@ import useBleManager from '../hooks/useBluetooth';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {
   Connected,
+  ConnectedBleCondition,
   ConnectedDeviceName,
   DeviceIDCoil,
   PasswordStoring,
@@ -48,6 +49,7 @@ export default function BluetoothList() {
   const [scannedDevices, setScannedDevices] = useState([]);
   const [deviceCount, setDeviceCount] = useState(0);
   const [devices, setDevices] = useState([]);
+  const [BleCondition , setBleCondition] = useRecoilState(ConnectedBleCondition)
   const {
     startScanning,
     connectToDevice,
@@ -67,16 +69,6 @@ export default function BluetoothList() {
   const ScanningIf = useRecoilValue(scanningCondition);
   const manager = new BleManager();
   const Devicename = useRecoilValue(ConnectedDeviceName);
-
-
-
-
-
-   
-
-
-
-
 
 
 
@@ -107,6 +99,8 @@ export default function BluetoothList() {
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!11', deviceID);
     setDeviceId(deviceID);
     console.log('Device Name:', name);
+    setBleCondition(name)
+
     setDeviceName(name);
     console.log('Service UUID:', serviceUUID);
     setServiceUUID(serviceUUID);

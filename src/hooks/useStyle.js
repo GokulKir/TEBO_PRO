@@ -178,8 +178,8 @@ const useStyle = () => {
       marginLeft: 65,
     },
     UIDModal: {
-      width: isTablet ? responsiveWidth(30) : responsiveWidth(40),
-      height: isTablet ? responsiveHeight(30) : responsiveHeight(40),
+      width: isTablet ? responsiveWidth(35) : responsiveWidth(45),
+      height: isTablet ? responsiveHeight(35) : responsiveHeight(45),
       elevation: 5,
       backgroundColor: '#fff',
       alignSelf: 'center',
@@ -198,7 +198,7 @@ const useStyle = () => {
     ModalButtonView: {
       flexDirection: 'row',
       justifyContent: 'space-evenly',
-      marginTop: 40,
+      marginTop: 60,
     },
     ModalButton: {
       width: isTablet ? responsiveWidth(12) : responsiveWidth(12),

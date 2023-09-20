@@ -21,9 +21,9 @@ import MicOff from '../StreamComponent/MicOff';
 import MicOn from '../StreamComponent/MicOn';
 import VideoOff from '../StreamComponent/VideoOff';
 import VideoOn from '../StreamComponent/VideoOn';
-import {useRecoilValue} from 'recoil';
+import {useRecoilState, useRecoilStateLoadable, useRecoilValue} from 'recoil';
 import {useSocket} from '../context/SocketContext';
-import {UIDSTORING} from '../Recoil/recoilState';
+import {MqttMessage, UIDSTORING} from '../Recoil/recoilState';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import IconContainer from '../StreamComponent/IconContainer';
 import useMQTT from '../hooks/useMqtt';
@@ -34,8 +34,10 @@ import apiInstance from '../api/apiInstance';
 import useGeolocation from '../hooks/useLocation';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import mqtt from 'sp-react-native-mqtt';
+import useMqttClient from '../hooks/useMqtt';
 
 export default function VideoCallScreen({}) {
+  const {client, data} = useMqttClient();
   const navigation = useNavigation();
   const [localStream, setlocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
@@ -43,9 +45,19 @@ export default function VideoCallScreen({}) {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [text, setText] = useState('Hello World');
-  const [Data , setData] = useState([])
-  const [Dataname , setDataname] = useState([])
+  const [Data, setData] = useState([]);
+  const [Dataname, setDataname] = useState([]);
+  const [allData, setAllData] = useState();
+  const [Scroll, setScroll] = useState(false);
+  const [callData, setCallData] = useState('');
+  const [mqMe, setMqme] = useState(null);
   const uid = useRecoilValue(UIDSTORING);
+  const mqttData = useRecoilValue(MqttMessage);
+  const [confName, setConfName] = useState('');
+  const [random, setRandom] = useState('');
+  const [checking , setChecking] = useState(null)
+  const [connectionVisible , setConnectionVisible] = useState(false)
+
   const {
     data: {
       robot: {status, uuid},
@@ -54,26 +66,60 @@ export default function VideoCallScreen({}) {
 
   const {location, placeName, getCurrentLocation} = useGeolocation();
 
+  useEffect(() => {
+    console.log('+++++++++++++++++MQTT', mqttData);
+
+    if (data !== null) {
+      console.log('Mqtt data' + JSON.stringify(data));
+      console.log('Mqtt data', data);
+      peerConnection.current.close();
+      setlocalStream(null);
+      setType('JOIN');
+      if(data == 'call ended'){
+        navigation.replace('Checking');
+      }
+    
+    }
+  }, []);
+
   const host = 'sonic.domainenroll.com';
-const port = '1883';
-const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
-const topic =  `/Devlacus/Tebo/${uuid}/instructions`;
-const userData = `/Devlacus/Tebo/${uuid}/instructions`;
+  const port = '1883';
+  const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
+  const topic = `Devlacus/Tebo/${uuid}/instructions`;
+  const userData = `Devlacus/Tebo/${uuid}/instructions`;
 
-const connectUrl = `mqtt://${host}:${port}`;
+  useEffect(() => {
+    console.log('This is mqttdata))))))))))))))))))))))))))))', mqttData);
 
+    if (mqttData !== null) {
+      const {data, qos, retain, topic} = mqttData;
 
+      setMqme(data);
+    }
+  }, [mqttData]);
 
-useEffect(()=>{
+  useEffect(() => {
+    if (mqMe === 'call end') {
+      peerConnection.current.close();
+      setlocalStream(null);
+      setType('JOIN');
+      navigation.replace('Checking');
+    }
+    setMqme(null);
+  }, [mqMe]);
 
-    mqtt.createClient({
-      uri: connectUrl,
-      clean: true,
-      auth: true,
-      user: 'domainenroll',
-      pass: 'de120467',
-      clientId: clientId,
-    })
+  const connectUrl = `mqtt://${host}:${port}`;
+
+  useEffect(() => {
+    mqtt
+      .createClient({
+        uri: connectUrl,
+        clean: true,
+        auth: true,
+        user: 'domainenroll',
+        pass: 'de120467',
+        clientId: clientId,
+      })
       .then(function (client) {
         client.on('closed', function () {
           console.log('mqtt.event.closed');
@@ -84,15 +130,16 @@ useEffect(()=>{
         });
 
         client.on('message', function (msg) {
-        console.log('mqtt.event.message', msg);
-        setVisible(true);
-        setData(msg)
+          console.log('mqtt.event.message', msg);
+
+          setVisible(true);
+          setData(msg);
         });
 
         client.on('connect', function () {
           console.log('connected');
-          client.subscribe(topic,0);
-          client.subscribe(userData,0);
+          client.subscribe(topic, 0);
+          client.subscribe(userData, 0);
         });
 
         client.connect();
@@ -100,83 +147,141 @@ useEffect(()=>{
       .catch(function (err) {
         console.log(err);
       });
+  }, []);
 
-},[])
+  useEffect(() => {
+    console.log('Mqtt message', Data);
+    const {data, qos, retain, topic} = Data;
+
+    console.log('}}}}}}}}}}}}}', data);
+
+    if (data) {
+      setAllData(JSON.parse(data));
+      setDataname(data);
+    }
+
+    //    const { subject, robot_uuid, name, email, owner_random_id } = data;
+
+    // console.log(subject);
+    // console.log(robot_uuid);
+    // console.log(name);
+    // console.log(email);
+    // console.log(owner_random_id);
+
+    // Now you can use these variables
+    console.log('data:', data);
+
+    console.log('qos:', qos);
+    console.log('retain:', retain);
+    console.log('topic:', topic);
+  }, [Data]);
+
+  useEffect(() => {
+    if (allData) {
+      console.log('____________+++++', allData);
+      console.log('+++))))))))))))))))))))))))', typeof allData);
+      const {subject, robot_uuid, name, email, owner_random_id} = allData;
+
+      console.log('subject:', subject);
+      console.log('robot_uuid:', robot_uuid);
+      console.log('name:', name);
+      setConfName(name);
+      console.log('email:', email);
+      console.log('owner_random_id:', owner_random_id);
+      setRandom(owner_random_id);
+    }
+  }, [allData]);
 
 
- useEffect(()=>{
-   console.log("Mqtt message",Data);
-   const { data, qos, retain, topic } = Data;
-
-// Now you can use these variables
-console.log("data:", data);
-setDataname(data);
-console.log("qos:", qos);
-console.log("retain:", retain);
-console.log("topic:", topic);
- },[Data])
 
 
-
- useEffect(()=>{
-
-  console.log("Mqtt subject",Dataname);
+  useEffect(() => {
+    if (checking !== null) {
+      try {
+        const requestData = {
+          robot_uuid: uuid,
+          owner_random_id: random,
+          accept_reject: checking,
+        };
   
+        console.log("U: "+  uuid +  "I" +   random +   "  A" +   checking);
+  
+        apiInstance
+          .post('http://tebo.domainenroll.com/api/v1/accept-reject', requestData)
+          .then((response) => {
+            // Handle the successful response here
+            console.log('POST response:', response.data);
+            setVisible(false);
+            setTimeout(()=>{
 
- },[])
+              setConnectionVisible(true)
+
+            },2500)
+
+            setConnectionVisible(false)
+
+          })
+          .catch((error) => {
+            console.error('POST error:', error);
+          });
+      } catch (error) {
+        console.error('Try-catch error:', error);
+      }
+    } else {
+      console.log('Checking API failed');
+    }
+  }, [checking]);
 
 
+
+
+  useEffect(() => {
+    console.log('Mqtt subject', Dataname);
+  }, []);
 
   const {BottomPage} = useStyle();
 
   const sty = BottomPage;
 
+  // const CheckingConditionfalse = async () => {
+  //   try {
+  //     const requestData = {
+  //       robot_uuid: `${uuid}`,
+  //       owner_random_id: random,
+  //       accept_reject: false,
+  //     };
+  //     const response = await apiInstance.post(
+  //       'http://tebo.domainenroll.com/api/v1/accept-reject',
+  //       requestData,
+  //     );
+  //     // Handle the response here
+  //     console.log('POST response:', response.data);
+  //     setVisible(false);
+  //   } catch (error) {
+  //     console.error('POST error:', error);
+  //   }
+  // };
 
- 
-  const CheckingConditionfalse = async () => {
+  // const CheckingCondition = async () => {
+  //   try {
+  //     const requestData = {
+  //       robot_uuid: `${uuid}`,
+  //       owner_random_id: random,
+  //       accept_reject: true,
+  //     };
 
-    try {
+  //     const response = await apiInstance.post(
+  //       '/api/v1/accept-reject',
+  //       requestData,
+  //     );
 
-      const requestData = {
-        robot_uuid: `${uuid}`,
-        owner_random_id: "OW-RK1KWA6-SKC-PEVDATO",
-        accept_reject: false
-      }
-      const response = await apiInstance.post('http://tebo.domainenroll.com/api/v1/accept-reject', requestData);
-      // Handle the response here
-      console.log('POST response:', response.data);
-    } catch (error) {
-      console.error('POST error:', error);
-    }
-
-
-  }
-
-  const CheckingCondition = async () => {
-
-
-    try {
-
-
-      const requestData = {
-        robot_uuid: `${uuid}`,
-        owner_random_id: "OW-RK1KWA6-SKC-PEVDATO",
-        accept_reject: true
-      }
-
-      const response = await apiInstance.post('/api/v1/accept-reject', requestData);
-
-      // Handle the response here
-      console.log('POST response:', response.data);
-    } catch (error) {
-      console.error('POST error:', error);
-    }
-
-
-  }
-
-
-
+  //     // Handle the response here
+  //     console.log('POST response:', response.data);
+  //     setVisible(true);
+  //   } catch (error) {
+  //     console.error('POST error:', error);
+  //   }
+  // };
 
   useEffect(() => {
     console.log('ROBOTUUID', uuid);
@@ -328,6 +433,7 @@ console.log("topic:", topic);
         })
         .catch(error => {
           // Log error
+          console.log('Error: ' + error);
         });
     });
 
@@ -467,24 +573,70 @@ console.log("topic:", topic);
               <Modal visible={visible} transparent>
                 <View style={sty.UIDModal}>
                   <View style={sty.centerBoxText}>
-                    <Text style={sty.PopUpText}>
-                     wants to connect to Robot Black Heart!
-                    </Text>
+                    <View style={{flexDirection: 'row'}}>
+                      <Text
+                        style={{
+                          color: '#000',
+                          fontWeight: '300',
+                          fontStyle: 'italic',
+                          marginTop: 30,
+                          fontSize: 14,
+                          fontWeight: 'bold',
+                        }}>
+                        {confName}
+                      </Text>
+
+                      <Text
+                        style={{
+                          color: '#000',
+                          fontWeight: '300',
+                          fontStyle: 'italic',
+                          marginTop: 30,
+                          fontSize: 14,
+                          left: 4,
+                        }}>
+                        wants to connect to Robot Black Heart!
+                      </Text>
+                    </View>
                   </View>
 
                   <View style={sty.ModalButtonView}>
                     <Ripple
-                      onPress={() => CheckingCondition()}
+                      onPress={() => setChecking(true)}
                       style={sty.ModalButton}>
                       <Text>ACCEPT</Text>
                     </Ripple>
 
                     <Ripple
-                      onPress={() => CheckingConditionfalse()}
+                      onPress={() => setChecking(false)}
                       style={sty.ModalButtonRed}>
                       <Text>REJECT</Text>
                     </Ripple>
                   </View>
+                </View>
+              </Modal>
+
+
+                        <Modal visible={connectionVisible} transparent>
+                <View style={sty.UIDModal}>
+                  <View style={sty.centerBoxText}>
+                    <View style={{flexDirection: 'row' , alignItems:'center' , justifyContent:'center'}}>
+
+                      <Text
+                        style={{
+                          color: '#000',
+                          fontWeight: '300',
+                          fontStyle: 'italic',
+                          marginTop: 66,
+                          fontSize: 20,
+                          left: 4,
+                        }}>
+                       Connection successfull!
+                      </Text>
+                    </View>
+                  </View>
+
+                  
                 </View>
               </Modal>
             </View>
@@ -637,13 +789,13 @@ console.log("topic:", topic);
           paddingHorizontal: 12,
           paddingVertical: 12,
         }}>
-        {localStream ? (
+        {/* {localStream ? (
           <RTCView
             objectFit={'cover'}
             style={{flex: 1, backgroundColor: '#050A0E'}}
             streamURL={localStream.toURL()}
           />
-        ) : null}
+        ) : null} */}
         {remoteStream ? (
           <RTCView
             objectFit={'cover'}
@@ -656,7 +808,7 @@ console.log("topic:", topic);
           />
         ) : null}
 
-        <View
+        {/* <View
           style={{
             marginVertical: 12,
             flexDirection: 'row',
@@ -718,7 +870,7 @@ console.log("topic:", topic);
               return <CameraSwitch height={24} width={24} fill="#FFF" />;
             }}
           />
-        </View>
+        </View> */}
       </View>
     );
   };
